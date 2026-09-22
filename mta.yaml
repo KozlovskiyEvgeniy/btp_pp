@@ -5,9 +5,20 @@ modules:
 - name: pp-router
   type: approuter.nodejs
   path: router
+  parameters:
+    disk-quota: 256M
+    memory: 256M
+    keep-existing-routes: true
+    routes:
+    - route: ${subdomain}-pp-router.${default-domain}
+    - route: https://test-d1ih0su8-pp-router.cfapps.us10-001.hana.ondemand.com
+    - route: https://test-d1ih0su8-pp-router.${default-domain}
+  properties:
+    TENANT_HOST_PATTERN: "^(.*)-pp-router.${default-domain}"
   requires:
   - name: pp-html5-repo-runtime
   - name: pp-uaa
+  - name: pp-saas-registry
   - name: pp-connectivity
   - name: pp-destination-service
     group: destinations
@@ -15,9 +26,6 @@ modules:
       forwardAuthToken: false
       name: ui5
       url: https://ui5.sap.com
-  parameters:
-    disk-quota: 256M
-    memory: 256M
 - name: pp-app-content
   type: com.sap.application.content
   path: .
@@ -85,7 +93,7 @@ resources:
   type: org.cloudfoundry.managed-service
   parameters:
     config:
-      tenant-mode: dedicated
+      tenant-mode: shared
       xsappname: pp-${org}-${space}
     path: ./xs-security.json
     service: xsuaa
@@ -93,6 +101,21 @@ resources:
     service-plan: application
     service-keys:
     - name: pp-uaa-key
+- name: pp-saas-registry
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: saas-registry
+    service-plan: application
+    service-name: pp-saas-registry
+    config:
+      xsappname: pp-${org}-${space}
+      appName: pp
+      displayName: Notes
+      description: Multitenant Notes Fiori application
+      category: Custom Apps
+      appUrls:
+        onSubscription: https://${subdomain}-pp-router.${default-domain}/callback/v1.0/tenants/{tenantId}
+        getDependencies: https://${subdomain}-pp-router.${default-domain}/callback/v1.0/dependencies
 - name: pp-html5-repo-runtime
   type: org.cloudfoundry.managed-service
   parameters:
@@ -132,3 +155,4 @@ resources:
 parameters:
   deploy_mode: html5-repo
   enable-parallel-deployments: true
+  subdomain: adbdba71trial

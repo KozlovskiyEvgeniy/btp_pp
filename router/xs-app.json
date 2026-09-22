@@ -17,8 +17,17 @@
       "source": "^/sap/(.*)$",
       "target": "/sap/$1",
       "destination": "SAP_ABAP_BACKEND",
+      "preferLocal": true,
       "authenticationType": "xsuaa",
+      "scope": "$XSAPPNAME.User",
       "csrfProtection": false
+    },
+    {
+      "source": "^(.*)$",
+      "target": "$1",
+      "service": "html5-apps-repo-rt",
+      "authenticationType": "xsuaa",
+      "scope": "$XSAPPNAME.User"
     }
   ],
   "welcomeFile": "/uinotes"

@@ -1,12 +1,44 @@
 {
+  "tenant-mode": "shared",
   "description": "Security profile of called application",
-  "scopes": [],
-  "attributes": [],
-  "role-templates": [],
-  "oauth2-configuration": {
-      "redirect-uris": [
-          "https://adbdba71trial-dev-pp-router.cfapps.us10-001.hana.ondemand.com/login/callback",
-          "https://adbdba71trial-dev-pp-router.cfapps.us10-001.hana.ondemand.com/"
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.Callback",
+      "description": "SaaS callbacks for tenant onboarding, offboarding and getDependencies",
+      "grant-as-authority-to-apps": [
+        "$XSAPPNAME(application,sap-provisioning,tenant-onboarding)"
       ]
+    },
+    {
+      "name": "$XSAPPNAME.User",
+      "description": "Access the Notes application"
+    }
+  ],
+  "attributes": [],
+  "role-templates": [
+    {
+      "name": "User",
+      "description": "Access the Notes application",
+      "scope-references": [
+        "$XSAPPNAME.User"
+      ]
+    }
+  ],
+  "role-collections": [
+    {
+      "name": "Notes User",
+      "description": "Access the Notes Fiori application",
+      "role-template-references": [
+        "$XSAPPNAME.User"
+      ]
+    }
+  ],
+  "oauth2-configuration": {
+    "redirect-uris": [
+      "https://adbdba71trial-dev-pp-router.cfapps.us10-001.hana.ondemand.com/**",
+      "https://*-pp-router.cfapps.us10-001.hana.ondemand.com/**",
+      "https://*.launchpad.cfapps.us10-001.hana.ondemand.com/**",
+      "https://*.workzone.cfapps.us10-001.hana.ondemand.com/**"
+    ]
   }
 }
